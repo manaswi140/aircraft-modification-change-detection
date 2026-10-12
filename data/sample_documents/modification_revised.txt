@@ -1,0 +1,16 @@
+
+MODIFICATION ID: MOD-SAMPLE-001
+TITLE: Environmental Control System Inspection Requirements
+REVISION: B
+
+REQ-001: Inspect the environmental control system ducts every 300 flight hours.
+
+REQ-002: Replace damaged duct insulation before the aircraft returns to service.
+
+REQ-003: Record all inspection results in the aircraft maintenance logbook and the digital maintenance tracking system.
+
+REQ-004: Perform inspections using the approved maintenance procedure.
+
+REQ-005: Notify the maintenance supervisor and quality assurance team when a defect is identified.
+
+REQ-006: Verify that inspection records are complete before closing the maintenance task.

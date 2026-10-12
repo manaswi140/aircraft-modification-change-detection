@@ -1,0 +1,9 @@
+streamlit
+pandas
+sentence-transformers
+pypdf
+python-docx
+openpyxl
+reportlab
+python-dotenv
+requests
