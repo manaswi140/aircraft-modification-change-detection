@@ -1,23 +1,22 @@
-
 # Aircraft Modification Change Detection and Impact Analysis System
 
-## Overview
+A Python and Streamlit application for comparing aircraft-modification technical documents, detecting requirement changes, and producing preliminary impact-analysis reports for human review.
 
-The Aircraft Modification Change Detection and Impact Analysis System is a Python-based application that compares technical documents, identifies requirement changes, matches requirements when their IDs change, and generates preliminary impact-analysis reports.
+The system combines document extraction, requirement matching, semantic similarity, rule-based impact analysis, optional Gemini-based summaries, and PDF/Excel report generation.
 
-The application combines text processing, semantic similarity, rule-based impact analysis, and Large Language Model (LLM) summarization to support technical document review.
+> **Important:** This is an educational decision-support prototype. It does not determine regulatory compliance, establish airworthiness, or replace approved engineering and certification processes.
 
 ## Key Features
 
-- **Multi-format document processing:** Supports TXT, PDF, and DOCX files.
-- **Requirement extraction:** Identifies structured requirements using requirement IDs.
-- **Change detection:** Detects added, removed, modified, and unchanged requirements.
-- **Semantic matching:** Uses Sentence Transformers to match similar requirements when their IDs change.
-- **Numeric change detection:** Highlights changes in numeric values that may require additional review.
-- **Preliminary impact analysis:** Identifies potential impact areas and assigns review priorities using predefined rules.
-- **LLM-powered summaries:** Uses the Gemini API to produce concise summaries of detected changes, with a local fallback.
-- **Report generation:** Exports change results and impact analysis to Excel and PDF.
-- **Automated testing:** Includes tests for document processing, change detection, semantic matching, impact analysis, and summarization.
+- **Multi-format document input:** Supports TXT, PDF, and DOCX files.
+- **Requirement extraction:** Extracts structured requirements using requirement identifiers and supported document formats.
+- **Change detection:** Identifies added, removed, modified, and unchanged requirements.
+- **Semantic matching:** Uses Sentence Transformers to find potentially corresponding requirements when their identifiers differ.
+- **Numeric-change highlighting:** Flags numeric differences that may need engineering review.
+- **Preliminary impact analysis:** Applies predefined rules to suggest potential impact areas and review priorities.
+- **Change summaries:** Uses the configured Gemini API when available and provides a local fallback when API summarization is unavailable.
+- **Report generation:** Exports comparison and impact-analysis results to PDF and Excel.
+- **Automated tests:** Includes tests for document loading, change detection, semantic matching, impact analysis, summarization, and the processing pipeline.
 
 ## Technology Stack
 
@@ -25,19 +24,19 @@ The application combines text processing, semantic similarity, rule-based impact
 - Streamlit
 - Pandas
 - Sentence Transformers
-- Scikit-learn
+- scikit-learn
 - SciPy
 - ReportLab
 - OpenPyXL
 - PyPDF
 - python-docx
 - Requests
-- Google Gemini API
+- Google Gemini API (optional, for LLM-based summaries)
 
 ## Project Structure
 
 ```text
-Aircraft modification change detection system/
+aircraft-modification-change-detection/
 ├── app.py
 ├── requirements.txt
 ├── .env.example
@@ -68,95 +67,121 @@ Aircraft modification change detection system/
     └── test_llm_summarizer.py
 ```
 
-## Installation
+## Getting Started
 
 ### 1. Clone the repository
 
 ```bash
-git clone <YOUR_GITHUB_REPOSITORY_URL>
-cd "Aircraft modification change detection system"
+git clone https://github.com/manaswi140/aircraft-modification-change-detection.git
+cd aircraft-modification-change-detection
 ```
 
-### 2. Create and activate a virtual environment
+### 2. Create a virtual environment
 
 ```bash
 python -m venv .venv
 ```
 
-Windows Command Prompt:
+Activate it using the instructions for your terminal.
+
+**Windows Command Prompt**
+
+```bat
+.venv\Scripts\activate
+```
+
+**Windows PowerShell**
+
+```powershell
+.\.venv\Scripts\Activate.ps1
+```
+
+**macOS / Linux**
 
 ```bash
-.venv\Scripts\activate
+source .venv/bin/activate
 ```
 
 ### 3. Install dependencies
 
 ```bash
 python -m pip install --upgrade pip
-pip install -r requirements.txt
+python -m pip install -r requirements.txt
 ```
 
-## Configuration
+### 4. Configure optional LLM summarization
 
-Create a `.env` file in the project root using `.env.example` as a reference.
+The application can use a Gemini API-compatible endpoint for summaries. To configure it, create a `.env` file in the project root based on `.env.example`.
 
-Configure your Gemini API credentials and model settings:
+Example configuration:
 
-```text
+```dotenv
 LLM_API_KEY=your_api_key_here
 LLM_MODEL=your_supported_gemini_model
 LLM_API_BASE_URL=https://generativelanguage.googleapis.com/v1beta/openai/
 ```
 
-Replace the placeholder values with your own valid configuration. Never commit your `.env` file or expose your API key.
+Replace the placeholders with valid values supported by your configuration. Do not commit `.env` or expose API credentials. Keep `.env.example` limited to placeholder values.
 
-The summarizer can use a local fallback when no API key is configured or the API request fails.
+If the API key is not configured or an API request fails, the application can use its local summary fallback.
 
-## Run the Application
+### 5. Run the application
 
-From the project root, run:
+From the project root:
 
 ```bash
 streamlit run app.py
 ```
 
-Open the local URL displayed in the terminal by Streamlit.
+Open the local URL shown in the terminal. Upload the original and revised technical documents to review detected changes, potential impact areas, priorities, summaries, and available reports.
 
-Upload the original and revised technical documents to inspect detected changes, potential impacts, and generated reports.
+## Run the Tests
 
-## Run Tests
-
-Run the complete test suite:
+Run the test suite from the project root:
 
 ```bash
 python -m pytest -v
 ```
 
+The tests cover key project components. A passing test suite does not, by itself, prove that every result is technically correct for real-world aircraft-modification documents.
+
 ## Example Use Case
 
-The sample documents demonstrate a change to an inspection interval from 500 flight hours to 300 flight hours.
+The sample documents demonstrate a change in an inspection interval from **500 flight hours to 300 flight hours**. The application can flag the numeric difference and suggest potential maintenance-related impact areas for human review.
 
-The system can identify the numeric change, associate the requirement with potential maintenance-related impact areas, and flag it for human review.
+A separate sample demonstrates semantic matching when requirement identifiers change.
 
-A separate test document changes requirement IDs to demonstrate semantic matching.
+These examples illustrate the workflow; actual results depend on the content and formatting of the documents and the configured matching threshold.
+
+## How It Works
+
+1. **Load documents:** Extract text from supported TXT, PDF, or DOCX inputs.
+2. **Extract requirements:** Identify requirement records and their identifiers where supported by the document structure.
+3. **Compare requirements:** Match identifiers first, then use semantic similarity to suggest matches for remaining requirements.
+4. **Classify changes:** Identify additions, removals, modifications, and unchanged requirements.
+5. **Analyze potential impact:** Apply predefined rules to suggest impact areas and review priorities.
+6. **Summarize and export:** Generate a summary using the configured API or local fallback, then export results to PDF and Excel.
 
 ## Limitations
 
-- Semantic similarity is a matching aid and does not prove that two requirements are technically equivalent.
-- Impact areas and review priorities are preliminary rule-based suggestions.
-- LLM-generated summaries may omit context or contain errors and must be checked.
-- Results depend on document quality, requirement formatting, and the configured matching threshold.
-- A missing semantic similarity score may occur when a requirement is matched directly by its ID.
+- Semantic similarity is a matching aid; it does not prove that two requirements are technically equivalent.
+- Similarity thresholds can produce false matches or miss relevant relationships.
+- Numeric differences must be interpreted in context. Units, applicability, conditions, and surrounding requirement wording may affect their meaning.
+- Impact areas and review priorities are preliminary rule-based suggestions, not validated engineering conclusions.
+- LLM-generated summaries may omit context or contain errors and must be checked against the source documents.
+- Document extraction quality depends on the input file, formatting, and supported content. Scanned or image-only PDFs may require OCR and may not be processed correctly without it.
 - The application does not independently establish regulatory compliance, certification, or airworthiness.
 
-## Future Enhancements
+## Potential Future Enhancements
 
-- Support for scanned PDFs using OCR.
-- More advanced requirement relationship mapping.
-- Configurable similarity thresholds and impact rules.
-- Improved traceability and change-history visualization.
-- Additional automated tests and evaluation metrics.
+- OCR support for scanned PDFs.
+- More robust extraction of requirements from tables and complex document layouts.
+- Unit-aware numeric comparison.
+- Configurable similarity thresholds and impact-analysis rules.
+- Improved requirement traceability and change-history visualization.
+- Expanded regression tests and a labeled evaluation dataset.
+- Deployment for demonstration purposes.
 
 ## Disclaimer
 
-This project is intended for educational and preliminary technical-document analysis. It is not a substitute for approved engineering processes, qualified engineering judgment, regulatory review, or formal certification and airworthiness decisions.
+This project is intended for educational and preliminary technical-document analysis. It is not a substitute for approved engineering processes, qualified engineering judgment, regulatory review, or formal certification and airworthiness decisions. All flagged changes and suggested impacts must be independently reviewed by appropriately qualified personnel.
